@@ -1,0 +1,35 @@
+the const keyword declar the variables as "constans", wich means that it is unchangke and read-only 
+ 
+ the constat has two types 
+ Typed constans
+ unTyped constans
+
+ Example Type constans:
+
+ package main 
+ import (
+    "fmt"
+ )
+
+ const A int = 1
+
+func main(){
+    fmt.Println(A)
+}
+
+#unTyped constants#
+
+package main 
+
+import(
+    "fmr"
+ )
+
+const A = 1
+
+func main(){
+    fmrt.Println(A)
+}
+
+the big difference is when you declare the variable in one, you specify the type of content and the other 
+just declare the variable, and go decide the value of them 
