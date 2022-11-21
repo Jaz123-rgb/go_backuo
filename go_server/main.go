@@ -1,30 +1,46 @@
 package main
 
 import (
+	"context"
 	"fmt"
-	"net/http"
+
+	"os"
+
+	"github.com/gofiber/fiber/v2"
+	"github.com/gofiber/fiber/v2/middleware/cors"
+	"go.mongodb.org/mongo-driver/bson"
+	"go.mongodb.org/mongo-driver/mongo"
+	"go.mongodb.org/mongo-driver/mongo/options"
 )
 
-func formHandler(w http.ResponseWriter, r *http.Request) {
-	if err := r.ParseForm(); err != nil {
-		fmt.Fprintf(w, "ParseForm() err: %v", err)
-		return
+func main() {
+	port := os.Getenv("PORT")
+
+	if port == "" {
+		port = "3000"
 	}
 
-	fmt.Fprintf(w, "POST request successful")
-	name := r.FormValue("name")
-	address := r.FormValue("address")
-	fmt.Fprintf(w, "Name = %s\n", name)
-	fmt.Fprintf(w, "Addresss = %s\n", address)
-}
+	app := fiber.New()
 
-func HelloHandler() {
+	client, err := mongo.Connect(context.TODO(), options.Client().ApplyURI("mongodb://localhost:27017/gomongodb"))
+	if err != nil {
+		panic(err)
+	}
+	coll := client.Database("gomongodb").Collection("users")
+	coll.InsertOne(context.TODO(), bson.D{{
+		Key:   "name",
+		Value: "jaz",
+	}})
 
-}
+	app.Use(cors.New())
 
-func main() {
+	app.Static("/", "./client/dist")
 
-	fileServer := http.FileServer(http.Dir("./static"))
-	http.Handle("/", fileServer)
-
+	app.Get("/users", func(c *fiber.Ctx) error {
+		return c.JSON(&fiber.Map{
+			"data": "usuario desde el back-end",
+		})
+	})
+	app.Listen(":" + port)
+	fmt.Println("Server on port 3000")
 }
