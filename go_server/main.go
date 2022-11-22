@@ -11,6 +11,8 @@ import (
 	"go.mongodb.org/mongo-driver/bson"
 	"go.mongodb.org/mongo-driver/mongo"
 	"go.mongodb.org/mongo-driver/mongo/options"
+
+	"github.com/jazrgb-123/go-reactCrud/models"
 )
 
 func main() {
@@ -26,21 +28,53 @@ func main() {
 	if err != nil {
 		panic(err)
 	}
-	coll := client.Database("gomongodb").Collection("users")
-	coll.InsertOne(context.TODO(), bson.D{{
-		Key:   "name",
-		Value: "jaz",
-	}})
 
 	app.Use(cors.New())
 
 	app.Static("/", "./client/dist")
 
-	app.Get("/users", func(c *fiber.Ctx) error {
+	app.Post("/users", func(c *fiber.Ctx) error {
+
+		var user models.Users
+		c.BodyParser(&user)
+
+		//Cuando recibamos los datos
+		coll := client.Database("gomongodb").Collection("users")
+		result, err := coll.InsertOne(context.TODO(), bson.D{{
+			Value: user.Name,
+			Key:   "name",
+		}})
+
+		if err != nil {
+			panic(err)
+		}
+
 		return c.JSON(&fiber.Map{
-			"data": "usuario desde el back-end",
+			"data": result,
 		})
 	})
+
+	app.Get("/users", func(c *fiber.Ctx) error {
+		var users []models.Users
+
+		coll := client.Database("gomongodb").Collection("users")
+		results, error := coll.Find(context.TODO(), bson.M{})
+
+		if error != nil {
+			panic(error)
+		}
+
+		for results.Next(context.TODO()) {
+			var user models.Users
+			results.Decode(&user)
+			users = append(users, user)
+		}
+		return c.JSON(&fiber.Map{
+			"users": users,
+		})
+
+	})
+
 	app.Listen(":" + port)
 	fmt.Println("Server on port 3000")
 }
