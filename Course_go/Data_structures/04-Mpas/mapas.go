@@ -18,7 +18,7 @@ func main() {
 	dias[3] = "Test"
 	fmt.Println(dias)
 
-	//! Eliminar mapa
+	//! Eliminar mapa 
 	delete(dias, 3)
 	fmt.Println(dias, len(dias))
 
