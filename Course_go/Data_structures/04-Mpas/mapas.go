@@ -27,7 +27,7 @@ func main() {
 	estudiantes := make(map[string][]int)
 
 	estudiantes["Alex"] = []int{13, 15, 16}
-	estudiantes["Roel"] = []int{14, 13, 17}
+	estudiantes["Roel"] = []int{113, 13, 17}
 
 	fmt.Println(estudiantes)
 
