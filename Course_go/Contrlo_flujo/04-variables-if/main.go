@@ -10,7 +10,7 @@ func main() {
 	} else {
 		fmt.Printf("Nombre: %s - edad %d\n", name, age)
 	}
-
+  
 	user := make(map[string]string)
 
 	user["ale"] = "alex@gmail.com"
